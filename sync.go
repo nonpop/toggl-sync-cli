@@ -75,11 +75,12 @@ func runSync(toggl *TogglClient, tempo *TempoClient, jira *JiraClient, opts Sync
 		}
 
 		// Create Tempo worklog
+		localTime := startTime.Local()
 		wl := TempoWorklog{
 			IssueID:          issueID,
 			TimeSpentSeconds: entry.Duration,
-			StartDate:        startTime.Format("2006-01-02"),
-			StartTime:        startTime.Format("15:04:05"),
+			StartDate:        localTime.Format("2006-01-02"),
+			StartTime:        localTime.Format("15:04:05"),
 			Description:      desc,
 			AuthorAccountID:  opts.AccountID,
 		}
