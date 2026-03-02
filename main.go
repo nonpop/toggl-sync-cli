@@ -60,7 +60,6 @@ func main() {
 		startDate.Format("2006-01-02"), endDate.Format("2006-01-02"))
 
 	result, err := runSync(togglClient, tempoClient, jiraClient, SyncOptions{
-		SyncedTag: cfg.Toggl.SyncedTag,
 		AccountID: cfg.Jira.AccountID,
 		DryRun:    *dryRun,
 		StartDate: startDate,
