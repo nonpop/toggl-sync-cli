@@ -1,7 +1,9 @@
 # toggl-sync-cli
 
-> **Warning:** This code is 100% AI-generated and has not been manually reviewed. Use at your own risk.
+> [!WARNING]
+> This code is 100% AI-generated and has not been manually reviewed. Use at your own risk.
 
+> [!IMPORTANT]
 > This is a quick personal helper tool. I am not accepting pull requests or responding to issues. If you want changes, please fork the repository.
 
 A CLI tool that syncs time entries from [Toggl Track](https://toggl.com/) to [Jira Tempo](https://www.tempo.io/) worklogs.
