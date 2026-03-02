@@ -9,7 +9,7 @@ import (
 )
 
 type TempoWorklog struct {
-	IssueKey         string `json:"issueKey"`
+	IssueID          int    `json:"issueId"`
 	TimeSpentSeconds int    `json:"timeSpentSeconds"`
 	StartDate        string `json:"startDate"`
 	StartTime        string `json:"startTime"`

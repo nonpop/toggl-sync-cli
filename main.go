@@ -43,6 +43,11 @@ func main() {
 		BaseURL:  cfg.Tempo.BaseURL,
 		APIToken: cfg.Tempo.APIToken,
 	}
+	jiraClient := &JiraClient{
+		BaseURL:  cfg.Jira.BaseURL,
+		Email:    cfg.Jira.Email,
+		APIToken: cfg.Jira.APIToken,
+	}
 
 	if *dryRun {
 		fmt.Println("=== DRY RUN ===")
@@ -50,7 +55,7 @@ func main() {
 	fmt.Printf("Fetching Toggl entries from %s to %s...\n",
 		startDate.Format("2006-01-02"), endDate.Format("2006-01-02"))
 
-	result, err := runSync(togglClient, tempoClient, SyncOptions{
+	result, err := runSync(togglClient, tempoClient, jiraClient, SyncOptions{
 		SyncedTag: cfg.Toggl.SyncedTag,
 		AccountID: cfg.Jira.AccountID,
 		DryRun:    *dryRun,

@@ -9,6 +9,27 @@ import (
 	"time"
 )
 
+func newJiraMock(t *testing.T) *httptest.Server {
+	t.Helper()
+	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Extract issue key from path like /rest/api/3/issue/PROJ-1
+		parts := strings.Split(r.URL.Path, "/")
+		key := parts[len(parts)-1]
+		// Return a fake numeric ID based on the issue number
+		ids := map[string]string{
+			"PROJ-1": "1001",
+			"PROJ-2": "1002",
+			"PROJ-4": "1004",
+		}
+		id, ok := ids[key]
+		if !ok {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+		json.NewEncoder(w).Encode(map[string]interface{}{"id": id, "key": key})
+	}))
+}
+
 func TestSync_FullPipeline(t *testing.T) {
 	togglEntries := []TogglTimeEntry{
 		{
@@ -73,10 +94,14 @@ func TestSync_FullPipeline(t *testing.T) {
 	}))
 	defer tempoSrv.Close()
 
+	jiraSrv := newJiraMock(t)
+	defer jiraSrv.Close()
+
 	togglClient := &TogglClient{BaseURL: togglSrv.URL, APIToken: "tok"}
 	tempoClient := &TempoClient{BaseURL: tempoSrv.URL, APIToken: "tok"}
+	jiraClient := &JiraClient{BaseURL: jiraSrv.URL, Email: "e", APIToken: "t"}
 
-	result, err := runSync(togglClient, tempoClient, SyncOptions{
+	result, err := runSync(togglClient, tempoClient, jiraClient, SyncOptions{
 		SyncedTag: "synced",
 		AccountID: "acc-1",
 		DryRun:    false,
@@ -103,8 +128,8 @@ func TestSync_FullPipeline(t *testing.T) {
 	if len(tempoCreated) != 1 {
 		t.Fatalf("tempo worklogs created = %d, want 1", len(tempoCreated))
 	}
-	if tempoCreated[0]["issueKey"] != "PROJ-1" {
-		t.Errorf("worklog issueKey = %v, want PROJ-1", tempoCreated[0]["issueKey"])
+	if int(tempoCreated[0]["issueId"].(float64)) != 1001 {
+		t.Errorf("worklog issueId = %v, want 1001", tempoCreated[0]["issueId"])
 	}
 
 	if len(taggedEntries) != 1 {
@@ -127,6 +152,7 @@ func TestSync_DryRun(t *testing.T) {
 
 	tempoCallCount := 0
 	tagCallCount := 0
+	jiraCallCount := 0
 
 	togglSrv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {
@@ -144,10 +170,16 @@ func TestSync_DryRun(t *testing.T) {
 	}))
 	defer tempoSrv.Close()
 
+	jiraSrv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		jiraCallCount++
+	}))
+	defer jiraSrv.Close()
+
 	togglClient := &TogglClient{BaseURL: togglSrv.URL, APIToken: "tok"}
 	tempoClient := &TempoClient{BaseURL: tempoSrv.URL, APIToken: "tok"}
+	jiraClient := &JiraClient{BaseURL: jiraSrv.URL, Email: "e", APIToken: "t"}
 
-	result, err := runSync(togglClient, tempoClient, SyncOptions{
+	result, err := runSync(togglClient, tempoClient, jiraClient, SyncOptions{
 		SyncedTag: "synced",
 		AccountID: "acc-1",
 		DryRun:    true,
@@ -169,6 +201,9 @@ func TestSync_DryRun(t *testing.T) {
 	}
 	if tagCallCount != 0 {
 		t.Errorf("toggl tag was called %d times during dry-run", tagCallCount)
+	}
+	if jiraCallCount != 0 {
+		t.Errorf("jira was called %d times during dry-run", jiraCallCount)
 	}
 }
 
@@ -215,10 +250,14 @@ func TestSync_TempoFailure(t *testing.T) {
 	}))
 	defer tempoSrv.Close()
 
+	jiraSrv := newJiraMock(t)
+	defer jiraSrv.Close()
+
 	togglClient := &TogglClient{BaseURL: togglSrv.URL, APIToken: "tok"}
 	tempoClient := &TempoClient{BaseURL: tempoSrv.URL, APIToken: "tok"}
+	jiraClient := &JiraClient{BaseURL: jiraSrv.URL, Email: "e", APIToken: "t"}
 
-	result, err := runSync(togglClient, tempoClient, SyncOptions{
+	result, err := runSync(togglClient, tempoClient, jiraClient, SyncOptions{
 		SyncedTag: "synced",
 		AccountID: "acc-1",
 		DryRun:    false,
@@ -248,10 +287,16 @@ func TestSync_FetchFailure(t *testing.T) {
 	}))
 	defer tempoSrv.Close()
 
+	jiraSrv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		t.Error("jira should not be called when fetch fails")
+	}))
+	defer jiraSrv.Close()
+
 	togglClient := &TogglClient{BaseURL: togglSrv.URL, APIToken: "tok"}
 	tempoClient := &TempoClient{BaseURL: tempoSrv.URL, APIToken: "tok"}
+	jiraClient := &JiraClient{BaseURL: jiraSrv.URL, Email: "e", APIToken: "t"}
 
-	_, err := runSync(togglClient, tempoClient, SyncOptions{
+	_, err := runSync(togglClient, tempoClient, jiraClient, SyncOptions{
 		SyncedTag: "synced",
 		AccountID: "acc-1",
 		StartDate: time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC),

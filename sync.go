@@ -21,7 +21,7 @@ type SyncResult struct {
 	WouldSync     int
 }
 
-func runSync(toggl *TogglClient, tempo *TempoClient, opts SyncOptions) (SyncResult, error) {
+func runSync(toggl *TogglClient, tempo *TempoClient, jira *JiraClient, opts SyncOptions) (SyncResult, error) {
 	entries, err := toggl.FetchEntries(opts.StartDate, opts.EndDate)
 	if err != nil {
 		return SyncResult{}, fmt.Errorf("fetching Toggl entries: %w", err)
@@ -66,9 +66,17 @@ func runSync(toggl *TogglClient, tempo *TempoClient, opts SyncOptions) (SyncResu
 			continue
 		}
 
+		// Resolve issue key to numeric ID
+		issueID, err := jira.GetIssueID(issueKey)
+		if err != nil {
+			fmt.Printf("FAIL: [%d] %s %q: %v\n", entry.ID, issueKey, desc, err)
+			result.Failed++
+			continue
+		}
+
 		// Create Tempo worklog
 		wl := TempoWorklog{
-			IssueKey:         issueKey,
+			IssueID:          issueID,
 			TimeSpentSeconds: entry.Duration,
 			StartDate:        startTime.Format("2006-01-02"),
 			StartTime:        startTime.Format("15:04:05"),

@@ -26,6 +26,9 @@ type TempoConfig struct {
 }
 
 type JiraConfig struct {
+	BaseURL   string `toml:"base_url"`
+	Email     string `toml:"email"`
+	APIToken  string `toml:"api_token"`
 	AccountID string `toml:"account_id"`
 }
 
@@ -50,7 +53,7 @@ func loadConfig(path string) (Config, error) {
 		cfg.Toggl.SyncedTag = "synced"
 	}
 	if cfg.Tempo.BaseURL == "" {
-		cfg.Tempo.BaseURL = "https://api.tempo.io/3"
+		cfg.Tempo.BaseURL = "https://api.tempo.io/4"
 	}
 	if cfg.Sync.SyncWindowDays == 0 {
 		cfg.Sync.SyncWindowDays = 7
@@ -62,6 +65,15 @@ func loadConfig(path string) (Config, error) {
 	}
 	if cfg.Tempo.APIToken == "" {
 		return Config{}, fmt.Errorf("tempo.api_token is required")
+	}
+	if cfg.Jira.BaseURL == "" {
+		return Config{}, fmt.Errorf("jira.base_url is required")
+	}
+	if cfg.Jira.Email == "" {
+		return Config{}, fmt.Errorf("jira.email is required")
+	}
+	if cfg.Jira.APIToken == "" {
+		return Config{}, fmt.Errorf("jira.api_token is required")
 	}
 	if cfg.Jira.AccountID == "" {
 		return Config{}, fmt.Errorf("jira.account_id is required")

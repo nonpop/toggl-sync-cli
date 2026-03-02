@@ -33,7 +33,7 @@ func TestTempoClient_CreateWorklog(t *testing.T) {
 	}
 
 	err := client.CreateWorklog(TempoWorklog{
-		IssueKey:         "PROJ-123",
+		IssueID:          12345,
 		TimeSpentSeconds: 3600,
 		StartDate:        "2026-03-02",
 		StartTime:        "09:00:00",
@@ -44,8 +44,8 @@ func TestTempoClient_CreateWorklog(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	if gotBody["issueKey"] != "PROJ-123" {
-		t.Errorf("issueKey = %v, want PROJ-123", gotBody["issueKey"])
+	if int(gotBody["issueId"].(float64)) != 12345 {
+		t.Errorf("issueId = %v, want 12345", gotBody["issueId"])
 	}
 	if gotBody["description"] != "fixed the bug" {
 		t.Errorf("description = %v, want 'fixed the bug'", gotBody["description"])
@@ -68,7 +68,7 @@ func TestTempoClient_CreateWorklog_APIError(t *testing.T) {
 	}
 
 	err := client.CreateWorklog(TempoWorklog{
-		IssueKey:         "PROJ-123",
+		IssueID:          12345,
 		TimeSpentSeconds: 3600,
 		StartDate:        "2026-03-02",
 		StartTime:        "09:00:00",

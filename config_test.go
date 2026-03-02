@@ -19,6 +19,9 @@ api_token = "tempo-token-456"
 base_url = "https://custom.tempo.io/3"
 
 [jira]
+base_url = "https://myorg.atlassian.net"
+email = "user@example.com"
+api_token = "jira-token-abc"
 account_id = "jira-acc-789"
 
 [sync]
@@ -66,6 +69,9 @@ api_token = "tok"
 api_token = "tok"
 
 [jira]
+base_url = "https://myorg.atlassian.net"
+email = "user@example.com"
+api_token = "jt"
 account_id = "acc"
 
 [sync]
@@ -81,8 +87,8 @@ cutoff_date = "2026-01-01"
 	if cfg.Toggl.SyncedTag != "synced" {
 		t.Errorf("default synced_tag = %q, want %q", cfg.Toggl.SyncedTag, "synced")
 	}
-	if cfg.Tempo.BaseURL != "https://api.tempo.io/3" {
-		t.Errorf("default base_url = %q, want %q", cfg.Tempo.BaseURL, "https://api.tempo.io/3")
+	if cfg.Tempo.BaseURL != "https://api.tempo.io/4" {
+		t.Errorf("default base_url = %q, want %q", cfg.Tempo.BaseURL, "https://api.tempo.io/4")
 	}
 	if cfg.Sync.SyncWindowDays != 7 {
 		t.Errorf("default sync_window_days = %d, want %d", cfg.Sync.SyncWindowDays, 7)
@@ -101,6 +107,9 @@ func TestLoadConfig_MissingRequired(t *testing.T) {
 [tempo]
 api_token = "t"
 [jira]
+base_url = "https://x.atlassian.net"
+email = "u@x.com"
+api_token = "j"
 account_id = "a"
 [sync]
 cutoff_date = "2026-01-01"
@@ -113,6 +122,54 @@ cutoff_date = "2026-01-01"
 api_token = "t"
 [tempo]
 [jira]
+base_url = "https://x.atlassian.net"
+email = "u@x.com"
+api_token = "j"
+account_id = "a"
+[sync]
+cutoff_date = "2026-01-01"
+`,
+		},
+		{
+			name: "missing jira base_url",
+			config: `
+[toggl]
+api_token = "t"
+[tempo]
+api_token = "t"
+[jira]
+email = "u@x.com"
+api_token = "j"
+account_id = "a"
+[sync]
+cutoff_date = "2026-01-01"
+`,
+		},
+		{
+			name: "missing jira email",
+			config: `
+[toggl]
+api_token = "t"
+[tempo]
+api_token = "t"
+[jira]
+base_url = "https://x.atlassian.net"
+api_token = "j"
+account_id = "a"
+[sync]
+cutoff_date = "2026-01-01"
+`,
+		},
+		{
+			name: "missing jira api_token",
+			config: `
+[toggl]
+api_token = "t"
+[tempo]
+api_token = "t"
+[jira]
+base_url = "https://x.atlassian.net"
+email = "u@x.com"
 account_id = "a"
 [sync]
 cutoff_date = "2026-01-01"
@@ -126,6 +183,9 @@ api_token = "t"
 [tempo]
 api_token = "t"
 [jira]
+base_url = "https://x.atlassian.net"
+email = "u@x.com"
+api_token = "j"
 [sync]
 cutoff_date = "2026-01-01"
 `,
@@ -138,6 +198,9 @@ api_token = "t"
 [tempo]
 api_token = "t"
 [jira]
+base_url = "https://x.atlassian.net"
+email = "u@x.com"
+api_token = "j"
 account_id = "a"
 [sync]
 `,
@@ -167,6 +230,9 @@ api_token = "t"
 [tempo]
 api_token = "t"
 [jira]
+base_url = "https://x.atlassian.net"
+email = "u@x.com"
+api_token = "j"
 account_id = "a"
 [sync]
 cutoff_date = "not-a-date"

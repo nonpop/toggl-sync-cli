@@ -35,6 +35,9 @@ api_token = "your-toggl-api-token"
 api_token = "your-tempo-api-token"
 
 [jira]
+base_url = "https://your-org.atlassian.net"
+email = "you@example.com"
+api_token = "your-jira-api-token"
 account_id = "your-jira-account-id"
 
 [sync]
@@ -47,6 +50,12 @@ cutoff_date = "2026-03-01"
 
 **`tempo.api_token`** — In Jira, open the Tempo sidebar and go to **Settings** > **API Integration** (under Data Access). Click **New Token**, give it a name, and set the access scope to allow worklog creation. Copy the token immediately — it is only shown once.
 
+**`jira.base_url`** — Your Jira Cloud instance URL, e.g. `https://your-org.atlassian.net`. You can find this in your browser address bar when visiting Jira.
+
+**`jira.email`** — The email address associated with your Atlassian account. Go to [Atlassian account settings](https://id.atlassian.com/manage-profile/email) to check.
+
+**`jira.api_token`** — Go to [Atlassian API tokens](https://id.atlassian.com/manage-profile/security/api-tokens), click **Create API token**, give it a name, and copy the token.
+
 **`jira.account_id`** — In Jira Cloud, click your avatar (top right) > **Profile**. Your account ID is the string in the URL after `/people/` (e.g. `https://your-org.atlassian.net/people/5abcdef1234567890abcdef` — the ID is `5abcdef1234567890abcdef`).
 
 ### Required fields
@@ -55,6 +64,9 @@ cutoff_date = "2026-03-01"
 |---|---|
 | `toggl.api_token` | Toggl Track API token |
 | `tempo.api_token` | Tempo API token (needs worklog write access) |
+| `jira.base_url` | Your Jira Cloud instance URL (e.g. `https://your-org.atlassian.net`) |
+| `jira.email` | Email for your Atlassian account |
+| `jira.api_token` | Jira/Atlassian API token |
 | `jira.account_id` | Your Atlassian account ID |
 | `sync.cutoff_date` | Ignore entries before this date (YYYY-MM-DD). Interpreted as midnight in your Toggl profile timezone. |
 
@@ -63,7 +75,7 @@ cutoff_date = "2026-03-01"
 | Field | Default | Description |
 |---|---|---|
 | `toggl.synced_tag` | `synced` | Tag name applied to synced entries |
-| `tempo.base_url` | `https://api.tempo.io/3` | Tempo API base URL |
+| `tempo.base_url` | `https://api.tempo.io/4` | Tempo API base URL |
 | `sync.sync_window_days` | `7` | Only fetch entries from the last N days |
 
 ## Usage
