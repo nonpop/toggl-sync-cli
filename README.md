@@ -54,7 +54,7 @@ cutoff_date = "2026-03-01"
 
 **`jira.email`** — The email address associated with your Atlassian account. Go to [Atlassian account settings](https://id.atlassian.com/manage-profile/email) to check.
 
-**`jira.api_token`** — Go to [Atlassian API tokens](https://id.atlassian.com/manage-profile/security/api-tokens), click **Create API token**, give it a name, and copy the token. You can use a scoped token with `read:jira-work` — the tool only needs read access to resolve issue keys to internal IDs.
+**`jira.api_token`** — Go to [Atlassian API tokens](https://id.atlassian.com/manage-profile/security/api-tokens), click **Create API token**, give it a name, select the `read:jira-work` scope, and copy the token. This is the only scope the tool needs (it reads issue IDs to create Tempo worklogs).
 
 **`jira.account_id`** — In Jira Cloud, click your avatar (top right) > **Profile**. Your account ID is the string in the URL after `/people/` (e.g. `https://your-org.atlassian.net/people/5abcdef1234567890abcdef` — the ID is `5abcdef1234567890abcdef`).
 
