@@ -46,8 +46,6 @@ email = "you@example.com"
 api_token = "your-jira-api-token"
 account_id = "your-jira-account-id"
 
-[sync]
-cutoff_date = "2026-03-01"
 ```
 
 ### Finding your API keys and account ID
@@ -74,12 +72,12 @@ cutoff_date = "2026-03-01"
 | `jira.email` | Email for your Atlassian account |
 | `jira.api_token` | Jira/Atlassian API token |
 | `jira.account_id` | Your Atlassian account ID |
-| `sync.cutoff_date` | Ignore entries before this date (YYYY-MM-DD). Interpreted as midnight in your Toggl profile timezone. |
 
 ### Optional fields
 
 | Field | Default | Description |
 |---|---|---|
+| `sync.cutoff_date` | *(none)* | Ignore entries before this date (YYYY-MM-DD) |
 | `tempo.base_url` | `https://api.tempo.io/4` | Tempo API base URL |
 | `sync.sync_window_days` | `7` | Only fetch entries from the last N days |
 

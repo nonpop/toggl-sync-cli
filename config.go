@@ -74,13 +74,11 @@ func loadConfig(path string) (Config, error) {
 	if cfg.Jira.AccountID == "" {
 		return Config{}, fmt.Errorf("jira.account_id is required")
 	}
-	if cfg.Sync.CutoffDate == "" {
-		return Config{}, fmt.Errorf("sync.cutoff_date is required")
-	}
-
-	// Validate cutoff_date format
-	if _, err := time.Parse("2006-01-02", cfg.Sync.CutoffDate); err != nil {
-		return Config{}, fmt.Errorf("sync.cutoff_date must be YYYY-MM-DD format: %w", err)
+	// Validate cutoff_date format if provided
+	if cfg.Sync.CutoffDate != "" {
+		if _, err := time.Parse("2006-01-02", cfg.Sync.CutoffDate); err != nil {
+			return Config{}, fmt.Errorf("sync.cutoff_date must be YYYY-MM-DD format: %w", err)
+		}
 	}
 
 	return cfg, nil

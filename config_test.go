@@ -183,21 +183,6 @@ api_token = "j"
 cutoff_date = "2026-01-01"
 `,
 		},
-		{
-			name: "missing sync cutoff_date",
-			config: `
-[toggl]
-api_token = "t"
-[tempo]
-api_token = "t"
-[jira]
-base_url = "https://x.atlassian.net"
-email = "u@x.com"
-api_token = "j"
-account_id = "a"
-[sync]
-`,
-		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -211,6 +196,33 @@ account_id = "a"
 				t.Error("expected error for missing required field, got nil")
 			}
 		})
+	}
+}
+
+func TestLoadConfig_NoCutoffDate(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "config.toml")
+	if err := os.WriteFile(path, []byte(`
+[toggl]
+api_token = "t"
+[tempo]
+api_token = "t"
+[jira]
+base_url = "https://x.atlassian.net"
+email = "u@x.com"
+api_token = "j"
+account_id = "a"
+[sync]
+`), 0644); err != nil {
+		t.Fatalf("failed to write config: %v", err)
+	}
+
+	cfg, err := loadConfig(path)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if cfg.Sync.CutoffDate != "" {
+		t.Errorf("cutoff_date = %q, want empty", cfg.Sync.CutoffDate)
 	}
 }
 
