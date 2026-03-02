@@ -69,37 +69,3 @@ func TestTogglClient_FetchEntries(t *testing.T) {
 		t.Error("entries not returned correctly")
 	}
 }
-
-func TestTogglClient_AddTag(t *testing.T) {
-	var gotBody map[string]interface{}
-
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodPut {
-			t.Errorf("unexpected method: %s", r.Method)
-		}
-		if r.URL.Path != "/workspaces/100/time_entries/42" {
-			t.Errorf("unexpected path: %s", r.URL.Path)
-		}
-		json.NewDecoder(r.Body).Decode(&gotBody)
-		json.NewEncoder(w).Encode(map[string]interface{}{"id": 42})
-	}))
-	defer srv.Close()
-
-	client := &TogglClient{
-		BaseURL:  srv.URL,
-		APIToken: "test-token",
-	}
-
-	err := client.AddTag(100, 42, "synced")
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-
-	if gotBody["tag_action"] != "add" {
-		t.Errorf("tag_action = %v, want %q", gotBody["tag_action"], "add")
-	}
-	tags, ok := gotBody["tags"].([]interface{})
-	if !ok || len(tags) != 1 || tags[0] != "synced" {
-		t.Errorf("tags = %v, want [\"synced\"]", gotBody["tags"])
-	}
-}

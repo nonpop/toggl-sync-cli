@@ -12,7 +12,6 @@ func TestLoadConfig_ValidFull(t *testing.T) {
 	if err := os.WriteFile(path, []byte(`
 [toggl]
 api_token = "toggl-token-123"
-synced_tag = "done"
 
 [tempo]
 api_token = "tempo-token-456"
@@ -37,9 +36,6 @@ sync_window_days = 14
 	}
 	if cfg.Toggl.APIToken != "toggl-token-123" {
 		t.Errorf("toggl api_token = %q, want %q", cfg.Toggl.APIToken, "toggl-token-123")
-	}
-	if cfg.Toggl.SyncedTag != "done" {
-		t.Errorf("toggl synced_tag = %q, want %q", cfg.Toggl.SyncedTag, "done")
 	}
 	if cfg.Tempo.APIToken != "tempo-token-456" {
 		t.Errorf("tempo api_token = %q, want %q", cfg.Tempo.APIToken, "tempo-token-456")
@@ -83,9 +79,6 @@ cutoff_date = "2026-01-01"
 	cfg, err := loadConfig(path)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
-	}
-	if cfg.Toggl.SyncedTag != "synced" {
-		t.Errorf("default synced_tag = %q, want %q", cfg.Toggl.SyncedTag, "synced")
 	}
 	if cfg.Tempo.BaseURL != "https://api.tempo.io/4" {
 		t.Errorf("default base_url = %q, want %q", cfg.Tempo.BaseURL, "https://api.tempo.io/4")

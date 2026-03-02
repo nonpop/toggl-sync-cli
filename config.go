@@ -16,8 +16,7 @@ type Config struct {
 }
 
 type TogglConfig struct {
-	APIToken  string `toml:"api_token"`
-	SyncedTag string `toml:"synced_tag"`
+	APIToken string `toml:"api_token"`
 }
 
 type TempoConfig struct {
@@ -49,9 +48,6 @@ func loadConfig(path string) (Config, error) {
 	}
 
 	// Apply defaults
-	if cfg.Toggl.SyncedTag == "" {
-		cfg.Toggl.SyncedTag = "synced"
-	}
 	if cfg.Tempo.BaseURL == "" {
 		cfg.Tempo.BaseURL = "https://api.tempo.io/4"
 	}
