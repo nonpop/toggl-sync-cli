@@ -107,6 +107,30 @@ func runSync(toggl *TogglClient, tempo *TempoClient, jira *JiraClient, opts Sync
 	return result, nil
 }
 
+type worklogKey struct {
+	IssueID          int
+	StartDate        string
+	StartTime        string
+	TimeSpentSeconds int
+}
+
+func buildLookupSet(worklogs []TempoExistingWorklog, accountID string) map[worklogKey]struct{} {
+	set := make(map[worklogKey]struct{})
+	for _, wl := range worklogs {
+		if wl.AuthorAccountID != accountID {
+			continue
+		}
+		key := worklogKey{
+			IssueID:          wl.IssueID,
+			StartDate:        wl.StartDate,
+			StartTime:        wl.StartTime,
+			TimeSpentSeconds: wl.TimeSpentSeconds,
+		}
+		set[key] = struct{}{}
+	}
+	return set
+}
+
 func hasTag(tags []string, target string) bool {
 	for _, t := range tags {
 		if t == target {

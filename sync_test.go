@@ -276,6 +276,33 @@ func TestSync_TempoFailure(t *testing.T) {
 	}
 }
 
+func TestBuildLookupSet(t *testing.T) {
+	worklogs := []TempoExistingWorklog{
+		{IssueID: 1001, StartDate: "2026-03-01", StartTime: "09:00:00", TimeSpentSeconds: 3600, AuthorAccountID: "me"},
+		{IssueID: 1002, StartDate: "2026-03-01", StartTime: "10:00:00", TimeSpentSeconds: 1800, AuthorAccountID: "other"},
+		{IssueID: 1003, StartDate: "2026-03-01", StartTime: "11:00:00", TimeSpentSeconds: 900, AuthorAccountID: "me"},
+	}
+
+	set := buildLookupSet(worklogs, "me")
+
+	// Should include my worklogs
+	if _, ok := set[worklogKey{1001, "2026-03-01", "09:00:00", 3600}]; !ok {
+		t.Error("expected worklog 1001 in set")
+	}
+	if _, ok := set[worklogKey{1003, "2026-03-01", "11:00:00", 900}]; !ok {
+		t.Error("expected worklog 1003 in set")
+	}
+
+	// Should exclude other user's worklog
+	if _, ok := set[worklogKey{1002, "2026-03-01", "10:00:00", 1800}]; ok {
+		t.Error("worklog 1002 (other user) should not be in set")
+	}
+
+	if len(set) != 2 {
+		t.Errorf("set size = %d, want 2", len(set))
+	}
+}
+
 func TestSync_FetchFailure(t *testing.T) {
 	togglSrv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
