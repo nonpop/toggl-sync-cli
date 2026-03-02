@@ -6,6 +6,7 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestSync_FullPipeline(t *testing.T) {
@@ -79,6 +80,8 @@ func TestSync_FullPipeline(t *testing.T) {
 		SyncedTag: "synced",
 		AccountID: "acc-1",
 		DryRun:    false,
+		StartDate: time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC),
+		EndDate:   time.Date(2026, 12, 31, 0, 0, 0, 0, time.UTC),
 	})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
@@ -148,6 +151,8 @@ func TestSync_DryRun(t *testing.T) {
 		SyncedTag: "synced",
 		AccountID: "acc-1",
 		DryRun:    true,
+		StartDate: time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC),
+		EndDate:   time.Date(2026, 12, 31, 0, 0, 0, 0, time.UTC),
 	})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
@@ -217,6 +222,8 @@ func TestSync_TempoFailure(t *testing.T) {
 		SyncedTag: "synced",
 		AccountID: "acc-1",
 		DryRun:    false,
+		StartDate: time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC),
+		EndDate:   time.Date(2026, 12, 31, 0, 0, 0, 0, time.UTC),
 	})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
@@ -247,6 +254,8 @@ func TestSync_FetchFailure(t *testing.T) {
 	_, err := runSync(togglClient, tempoClient, SyncOptions{
 		SyncedTag: "synced",
 		AccountID: "acc-1",
+		StartDate: time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC),
+		EndDate:   time.Date(2026, 12, 31, 0, 0, 0, 0, time.UTC),
 	})
 	if err == nil {
 		t.Error("expected error when Toggl fetch fails, got nil")

@@ -9,6 +9,8 @@ type SyncOptions struct {
 	SyncedTag string
 	AccountID string
 	DryRun    bool
+	StartDate time.Time
+	EndDate   time.Time
 }
 
 type SyncResult struct {
@@ -20,7 +22,7 @@ type SyncResult struct {
 }
 
 func runSync(toggl *TogglClient, tempo *TempoClient, opts SyncOptions) (SyncResult, error) {
-	entries, err := toggl.FetchEntries(time.Time{}, time.Now())
+	entries, err := toggl.FetchEntries(opts.StartDate, opts.EndDate)
 	if err != nil {
 		return SyncResult{}, fmt.Errorf("fetching Toggl entries: %w", err)
 	}
