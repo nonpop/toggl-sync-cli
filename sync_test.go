@@ -99,7 +99,7 @@ func TestSync_FullPipeline(t *testing.T) {
 
 	togglClient := &TogglClient{BaseURL: togglSrv.URL, APIToken: "tok"}
 	tempoClient := &TempoClient{BaseURL: tempoSrv.URL, APIToken: "tok"}
-	jiraClient := &JiraClient{BaseURL: jiraSrv.URL, Email: "e", APIToken: "t"}
+	jiraClient := &JiraClient{Email: "e", APIToken: "t", gatewayBaseURL: jiraSrv.URL}
 
 	result, err := runSync(togglClient, tempoClient, jiraClient, SyncOptions{
 		SyncedTag: "synced",
@@ -177,7 +177,7 @@ func TestSync_DryRun(t *testing.T) {
 
 	togglClient := &TogglClient{BaseURL: togglSrv.URL, APIToken: "tok"}
 	tempoClient := &TempoClient{BaseURL: tempoSrv.URL, APIToken: "tok"}
-	jiraClient := &JiraClient{BaseURL: jiraSrv.URL, Email: "e", APIToken: "t"}
+	jiraClient := &JiraClient{Email: "e", APIToken: "t", gatewayBaseURL: jiraSrv.URL}
 
 	result, err := runSync(togglClient, tempoClient, jiraClient, SyncOptions{
 		SyncedTag: "synced",
@@ -255,7 +255,7 @@ func TestSync_TempoFailure(t *testing.T) {
 
 	togglClient := &TogglClient{BaseURL: togglSrv.URL, APIToken: "tok"}
 	tempoClient := &TempoClient{BaseURL: tempoSrv.URL, APIToken: "tok"}
-	jiraClient := &JiraClient{BaseURL: jiraSrv.URL, Email: "e", APIToken: "t"}
+	jiraClient := &JiraClient{Email: "e", APIToken: "t", gatewayBaseURL: jiraSrv.URL}
 
 	result, err := runSync(togglClient, tempoClient, jiraClient, SyncOptions{
 		SyncedTag: "synced",
@@ -294,7 +294,7 @@ func TestSync_FetchFailure(t *testing.T) {
 
 	togglClient := &TogglClient{BaseURL: togglSrv.URL, APIToken: "tok"}
 	tempoClient := &TempoClient{BaseURL: tempoSrv.URL, APIToken: "tok"}
-	jiraClient := &JiraClient{BaseURL: jiraSrv.URL, Email: "e", APIToken: "t"}
+	jiraClient := &JiraClient{Email: "e", APIToken: "t", gatewayBaseURL: jiraSrv.URL}
 
 	_, err := runSync(togglClient, tempoClient, jiraClient, SyncOptions{
 		SyncedTag: "synced",

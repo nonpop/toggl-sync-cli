@@ -48,6 +48,10 @@ func main() {
 		Email:    cfg.Jira.Email,
 		APIToken: cfg.Jira.APIToken,
 	}
+	if err := jiraClient.Init(); err != nil {
+		fmt.Fprintf(os.Stderr, "Error connecting to Jira: %v\n", err)
+		os.Exit(1)
+	}
 
 	if *dryRun {
 		fmt.Println("=== DRY RUN ===")
