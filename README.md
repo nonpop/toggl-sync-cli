@@ -48,7 +48,7 @@ cutoff_date = "2026-03-01"
 | `toggl.api_token` | Toggl Track API token (Profile > API Token) |
 | `tempo.api_token` | Tempo API token (Tempo Settings > API Integration) |
 | `jira.account_id` | Your Jira/Atlassian account ID |
-| `sync.cutoff_date` | Ignore entries before this date (YYYY-MM-DD) |
+| `sync.cutoff_date` | Ignore entries before this date (YYYY-MM-DD). Interpreted as midnight in your Toggl profile timezone. |
 
 ### Optional fields
 
