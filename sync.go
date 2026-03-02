@@ -19,11 +19,10 @@ type SyncResult struct {
 	WouldSync     int
 }
 
-func runSync(toggl *TogglClient, tempo *TempoClient, opts SyncOptions) SyncResult {
+func runSync(toggl *TogglClient, tempo *TempoClient, opts SyncOptions) (SyncResult, error) {
 	entries, err := toggl.FetchEntries(time.Time{}, time.Now())
 	if err != nil {
-		fmt.Printf("ERROR: failed to fetch Toggl entries: %v\n", err)
-		return SyncResult{}
+		return SyncResult{}, fmt.Errorf("fetching Toggl entries: %w", err)
 	}
 
 	var result SyncResult
@@ -94,7 +93,7 @@ func runSync(toggl *TogglClient, tempo *TempoClient, opts SyncOptions) SyncResul
 		result.Synced++
 	}
 
-	return result
+	return result, nil
 }
 
 func hasTag(tags []string, target string) bool {

@@ -75,11 +75,14 @@ func TestSync_FullPipeline(t *testing.T) {
 	togglClient := &TogglClient{BaseURL: togglSrv.URL, APIToken: "tok"}
 	tempoClient := &TempoClient{BaseURL: tempoSrv.URL, APIToken: "tok"}
 
-	result := runSync(togglClient, tempoClient, SyncOptions{
+	result, err := runSync(togglClient, tempoClient, SyncOptions{
 		SyncedTag: "synced",
 		AccountID: "acc-1",
 		DryRun:    false,
 	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
 
 	if result.Synced != 1 {
 		t.Errorf("synced = %d, want 1", result.Synced)
@@ -141,11 +144,14 @@ func TestSync_DryRun(t *testing.T) {
 	togglClient := &TogglClient{BaseURL: togglSrv.URL, APIToken: "tok"}
 	tempoClient := &TempoClient{BaseURL: tempoSrv.URL, APIToken: "tok"}
 
-	result := runSync(togglClient, tempoClient, SyncOptions{
+	result, err := runSync(togglClient, tempoClient, SyncOptions{
 		SyncedTag: "synced",
 		AccountID: "acc-1",
 		DryRun:    true,
 	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
 
 	if result.Synced != 0 {
 		t.Errorf("dry-run synced = %d, want 0", result.Synced)
@@ -207,16 +213,42 @@ func TestSync_TempoFailure(t *testing.T) {
 	togglClient := &TogglClient{BaseURL: togglSrv.URL, APIToken: "tok"}
 	tempoClient := &TempoClient{BaseURL: tempoSrv.URL, APIToken: "tok"}
 
-	result := runSync(togglClient, tempoClient, SyncOptions{
+	result, err := runSync(togglClient, tempoClient, SyncOptions{
 		SyncedTag: "synced",
 		AccountID: "acc-1",
 		DryRun:    false,
 	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
 
 	if result.Synced != 1 {
 		t.Errorf("synced = %d, want 1", result.Synced)
 	}
 	if result.Failed != 1 {
 		t.Errorf("failed = %d, want 1", result.Failed)
+	}
+}
+
+func TestSync_FetchFailure(t *testing.T) {
+	togglSrv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusInternalServerError)
+	}))
+	defer togglSrv.Close()
+
+	tempoSrv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		t.Error("tempo should not be called when fetch fails")
+	}))
+	defer tempoSrv.Close()
+
+	togglClient := &TogglClient{BaseURL: togglSrv.URL, APIToken: "tok"}
+	tempoClient := &TempoClient{BaseURL: tempoSrv.URL, APIToken: "tok"}
+
+	_, err := runSync(togglClient, tempoClient, SyncOptions{
+		SyncedTag: "synced",
+		AccountID: "acc-1",
+	})
+	if err == nil {
+		t.Error("expected error when Toggl fetch fails, got nil")
 	}
 }
