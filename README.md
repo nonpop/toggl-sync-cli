@@ -12,10 +12,10 @@ A CLI tool that syncs time entries from [Toggl Track](https://toggl.com/) to [Ji
 
 1. Fetches recent time entries from Toggl (default: last 7 days)
 2. Parses Jira issue keys from the entry description (e.g. `PROJ-123 fixed the bug`)
-3. Creates worklogs in Tempo for each unsynced entry
-4. Tags synced entries in Toggl to prevent duplicates
+3. Fetches existing Tempo worklogs for the same period
+4. Creates worklogs in Tempo only for entries not already present
 
-Sync state is tracked via Toggl tags — no local database needed.
+Deduplication is based on matching Toggl entries against existing Tempo worklogs (by issue, date, start time, and duration).
 
 ## Installation
 
@@ -80,7 +80,6 @@ cutoff_date = "2026-03-01"
 
 | Field | Default | Description |
 |---|---|---|
-| `toggl.synced_tag` | `synced` | Tag name applied to synced entries |
 | `tempo.base_url` | `https://api.tempo.io/4` | Tempo API base URL |
 | `sync.sync_window_days` | `7` | Only fetch entries from the last N days |
 
