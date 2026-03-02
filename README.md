@@ -41,13 +41,21 @@ account_id = "your-jira-account-id"
 cutoff_date = "2026-03-01"
 ```
 
+### Finding your API keys and account ID
+
+**`toggl.api_token`** — Go to [Toggl Track](https://track.toggl.com/), click your profile picture (bottom left) > **Profile Settings**, scroll down to **API Token**. Copy the token shown there.
+
+**`tempo.api_token`** — In Jira, open the Tempo sidebar and go to **Settings** > **API Integration** (under Data Access). Click **New Token**, give it a name, and set the access scope to allow worklog creation. Copy the token immediately — it is only shown once.
+
+**`jira.account_id`** — In Jira Cloud, click your avatar (top right) > **Profile**. Your account ID is the string in the URL after `/people/` (e.g. `https://your-org.atlassian.net/people/5abcdef1234567890abcdef` — the ID is `5abcdef1234567890abcdef`).
+
 ### Required fields
 
 | Field | Description |
 |---|---|
-| `toggl.api_token` | Toggl Track API token (Profile > API Token) |
-| `tempo.api_token` | Tempo API token (Tempo Settings > API Integration) |
-| `jira.account_id` | Your Jira/Atlassian account ID |
+| `toggl.api_token` | Toggl Track API token |
+| `tempo.api_token` | Tempo API token (needs worklog write access) |
+| `jira.account_id` | Your Atlassian account ID |
 | `sync.cutoff_date` | Ignore entries before this date (YYYY-MM-DD). Interpreted as midnight in your Toggl profile timezone. |
 
 ### Optional fields
