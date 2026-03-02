@@ -9,7 +9,7 @@ import (
 func TestLoadConfig_ValidFull(t *testing.T) {
 	dir := t.TempDir()
 	path := filepath.Join(dir, "config.toml")
-	os.WriteFile(path, []byte(`
+	if err := os.WriteFile(path, []byte(`
 [toggl]
 api_token = "toggl-token-123"
 synced_tag = "done"
@@ -24,7 +24,9 @@ account_id = "jira-acc-789"
 [sync]
 cutoff_date = "2026-01-15"
 sync_window_days = 14
-`), 0644)
+`), 0644); err != nil {
+		t.Fatalf("failed to write config: %v", err)
+	}
 
 	cfg, err := loadConfig(path)
 	if err != nil {
@@ -56,7 +58,7 @@ sync_window_days = 14
 func TestLoadConfig_Defaults(t *testing.T) {
 	dir := t.TempDir()
 	path := filepath.Join(dir, "config.toml")
-	os.WriteFile(path, []byte(`
+	if err := os.WriteFile(path, []byte(`
 [toggl]
 api_token = "tok"
 
@@ -68,7 +70,9 @@ account_id = "acc"
 
 [sync]
 cutoff_date = "2026-01-01"
-`), 0644)
+`), 0644); err != nil {
+		t.Fatalf("failed to write config: %v", err)
+	}
 
 	cfg, err := loadConfig(path)
 	if err != nil {
@@ -143,7 +147,9 @@ account_id = "a"
 		t.Run(tt.name, func(t *testing.T) {
 			dir := t.TempDir()
 			path := filepath.Join(dir, "config.toml")
-			os.WriteFile(path, []byte(tt.config), 0644)
+			if err := os.WriteFile(path, []byte(tt.config), 0644); err != nil {
+				t.Fatalf("failed to write config: %v", err)
+			}
 			_, err := loadConfig(path)
 			if err == nil {
 				t.Error("expected error for missing required field, got nil")
@@ -155,7 +161,7 @@ account_id = "a"
 func TestLoadConfig_InvalidCutoffDate(t *testing.T) {
 	dir := t.TempDir()
 	path := filepath.Join(dir, "config.toml")
-	os.WriteFile(path, []byte(`
+	if err := os.WriteFile(path, []byte(`
 [toggl]
 api_token = "t"
 [tempo]
@@ -164,7 +170,9 @@ api_token = "t"
 account_id = "a"
 [sync]
 cutoff_date = "not-a-date"
-`), 0644)
+`), 0644); err != nil {
+		t.Fatalf("failed to write config: %v", err)
+	}
 
 	_, err := loadConfig(path)
 	if err == nil {
