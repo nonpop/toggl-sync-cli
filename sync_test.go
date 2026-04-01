@@ -348,7 +348,7 @@ func TestBuildLookupSet(t *testing.T) {
 		{IssueID: 1003, StartDate: "2026-03-01", StartTime: "11:00:00", TimeSpentSeconds: 900, AuthorAccountID: "me"},
 	}
 
-	set := buildLookupSet(worklogs, "me")
+	set, _ := buildLookupSet(worklogs, "me", false)
 
 	// Should include my worklogs
 	if _, ok := set[worklogKey{1001, "2026-03-01", "09:00:00", 3600}]; !ok {

@@ -13,6 +13,7 @@ func main() {
 
 	configPath := flag.String("config", defaultConfigPath, "path to config file")
 	dryRun := flag.Bool("dry-run", false, "show what would be synced without doing it")
+	verbose := flag.Bool("verbose", false, "log matching details for each entry")
 	days := flag.Int("days", 0, "override sync window (days to look back)")
 	flag.Parse()
 
@@ -62,6 +63,7 @@ func main() {
 	result, err := runSync(togglClient, tempoClient, jiraClient, SyncOptions{
 		AccountID: cfg.Jira.AccountID,
 		DryRun:    *dryRun,
+		Verbose:   *verbose,
 		StartDate: startDate,
 		EndDate:   endDate,
 	})
@@ -73,9 +75,9 @@ func main() {
 	fmt.Println()
 	fmt.Println("=== Summary ===")
 	if *dryRun {
-		fmt.Printf("Would sync: %d\n", result.WouldSync)
+		fmt.Printf("Would sync: %d (%s)\n", result.WouldSync, formatDuration(result.TotalSeconds))
 	} else {
-		fmt.Printf("Synced:         %d\n", result.Synced)
+		fmt.Printf("Synced:         %d (%s)\n", result.Synced, formatDuration(result.TotalSeconds))
 		fmt.Printf("Failed:         %d\n", result.Failed)
 	}
 	fmt.Printf("Skipped:        %d\n", result.Skipped)
